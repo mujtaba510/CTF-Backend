@@ -4,10 +4,10 @@ const swaggerOptions = {
   definition: {
     openapi: "3.0.0",
     info: {
-      title: "Backend-PSS API",
+      title: "CTF-Backend API",
       version: "1.0.0",
       description:
-        "API documentation for Backend-PSS, offering endpoints for user authentication, account management, and related functionalities.",
+        "API documentation for CTF-Backend, offering endpoints for user authentication, account management, and related functionalities.",
     },
     tags: [
       { name: "Auth", description: "Authentication endpoints" },
