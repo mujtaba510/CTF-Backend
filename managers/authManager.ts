@@ -1,0 +1,133 @@
+import User from "../models/User.ts";
+import type { IUser } from "../models/User.ts";
+import sendEmail from "../services/emailService.ts";
+import AppError from "../utils/AppError.ts";
+import generateOTP from "../utils/generateOTP.ts";
+import generateToken from "../utils/generateToken.ts";
+import { getOTPExpiry } from "../utils/otpExpiry.ts";
+
+// Signup
+const signup = async ({ email, password }) => {
+  let user = await User.findOne({ email });
+  if (user) throw new AppError("User already exists", 400);
+
+  const otp = generateOTP();
+  const otpExpires = getOTPExpiry();
+
+  user = new User({ email, password, otp, otpExpires });
+  await user.save();
+  try {
+    await sendEmail(email, "Your OTP Code", `Your OTP code is: ${otp}`);
+  } catch (emailErr) {
+    user.otp = undefined;
+    user.otpExpires = undefined;
+    await user.save();
+    throw new AppError("Failed to send OTP email", 500);
+  }
+
+  return { message: "Signup successful, OTP sent to email" };
+};
+
+// Verify OTP
+const verifyOtp = async ({ email, otp }) => {
+  const user = await User.findOne({ email });
+  if (!user) throw new AppError("User not found", 400);
+  if (user.isVerified) throw new AppError("User already verified", 400);
+  if (
+    user.otp !== otp ||
+    (user.otpExpires && user.otpExpires.getTime() < Date.now())
+  ) {
+    throw new AppError("Invalid or expired OTP", 400);
+  }
+  user.isVerified = true;
+  user.otp = undefined;
+  user.otpExpires = undefined;
+  await user.save();
+  return { message: "OTP verified, account activated" };
+};
+
+// Login
+const login = async ({ email, password }) => {
+  const user = await User.findOne({ email });
+  if (!user) throw new AppError("Invalid credentials", 400);
+  if (!user.isVerified) throw new AppError("Account not verified", 400);
+  if (user.password !== password)
+    throw new AppError("Invalid credentials", 400);
+
+  const token = generateToken({ id: user._id });
+  return { token, message: "Login successful" };
+};
+
+// Forgot Password
+const forgetPassword = async ({ email }) => {
+  const user = await User.findOne({ email });
+  if (!user) throw new AppError("User not found", 400);
+
+  const otp = generateOTP();
+  const otpExpires = getOTPExpiry();
+  user.otp = otp;
+  user.otpExpires = otpExpires;
+  await user.save();
+  try {
+    await sendEmail(
+      email,
+      "Your Password Reset OTP",
+      `Your OTP code is: ${otp}`
+    );
+    user.isVerified = false;
+    await user.save();
+  } catch (emailErr) {
+    user.otp = undefined;
+    user.otpExpires = undefined;
+    await user.save();
+    throw new AppError("Failed to send OTP email", 500);
+  }
+
+  return { message: "OTP sent to email for password reset" };
+};
+
+// Reset Password
+const resetPassword = async ({ email, newPassword }) => {
+  const user = await User.findOne({ email });
+  if (!user) throw new AppError("User not found", 400);
+  if (!user.isVerified)
+    throw new AppError("OTP not verified for this user", 400);
+  user.password = newPassword;
+  await user.save();
+  return { message: "Password reset successful" };
+};
+
+// Change Password
+const changePassword = async (
+  { currentPassword, newPassword },
+  userId: string
+) => {
+  const user = await User.findById(userId);
+  if (!user) throw new AppError("User not found", 404);
+  if (user.password !== currentPassword)
+    throw new AppError("Current password is incorrect", 400);
+  user.password = newPassword;
+  await user.save();
+  return { message: "Password changed successfully" };
+};
+
+// Get logged-in user info
+const userInfo = (userData: IUser) => {
+  // Ensure user exists (added safety)
+  if (!userData) throw new AppError("Unauthorized: User not found", 401);
+
+  // Avoid logging sensitive data in production
+  if (process.env.NODE_ENV !== "production") {
+    console.log("User Data:", userData);
+  }
+  return { success: true, userData };
+};
+export {
+  signup,
+  verifyOtp,
+  login,
+  forgetPassword,
+  resetPassword,
+  changePassword,
+  userInfo,
+};
