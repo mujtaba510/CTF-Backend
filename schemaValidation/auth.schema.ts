@@ -1,10 +1,17 @@
 import { z } from "zod";
 
 const signupSchema = z.object({
-  email: z.email({ message: "A valid email is required." }),
+  username: z.string().min(1, { message: "Username is required." }),
+  email: z
+    .email({ message: "A valid email is required." }),
   password: z
     .string()
     .min(6, { message: "Password must be at least 6 characters." }),
+
+  universityName: z.string().optional(),
+  phoneNumber: z
+    .string()
+    .min(11, { message: "Phone number must be at least 11 digits."})
 });
 
 const otpSchema = z.object({

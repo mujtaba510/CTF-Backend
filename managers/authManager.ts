@@ -6,22 +6,51 @@ import generateOTP from "../utils/generateOTP.ts";
 import generateToken from "../utils/generateToken.ts";
 import { getOTPExpiry } from "../utils/otpExpiry.ts";
 
+interface SignupData {
+  username: string;
+  email: string;
+  password: string;
+  universityName?: string;
+  phoneNumber: string;
+}
+
 // Signup
-const signup = async ({ email, password }) => {
-  let user = await User.findOne({ email });
-  if (user) throw new AppError("User already exists", 400);
+const signup = async ({
+  username,
+  email,
+  password,
+  universityName,
+  phoneNumber,
+}: SignupData) => {
+  if (await User.findOne({ email }))
+    throw new AppError("User already exists", 400);
+
+  if (await User.findOne({ username }))
+    throw new AppError("Username already taken", 400);
+
+  if (await User.findOne({ phoneNumber }))
+    throw new AppError("Phone number already registered", 400);
 
   const otp = generateOTP();
   const otpExpires = getOTPExpiry();
 
-  user = new User({ email, password, otp, otpExpires });
-  await user.save();
+  const user = await User.create({
+    username,
+    email,
+    password,
+    universityName,
+    phoneNumber,
+    otp,
+    otpExpires,
+  });
+
   try {
     await sendEmail(email, "Your OTP Code", `Your OTP code is: ${otp}`);
-  } catch (emailErr) {
-    user.otp = undefined;
-    user.otpExpires = undefined;
-    await user.save();
+  } catch {
+    await User.updateOne(
+      { _id: user._id },
+      { $unset: { otp: "", otpExpires: "" } }
+    );
     throw new AppError("Failed to send OTP email", 500);
   }
 
