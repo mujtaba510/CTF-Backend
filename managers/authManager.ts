@@ -5,6 +5,7 @@ import AppError from "../utils/AppError.ts";
 import generateOTP from "../utils/generateOTP.ts";
 import generateToken from "../utils/generateToken.ts";
 import { getOTPExpiry } from "../utils/otpExpiry.ts";
+import bcrypt from "bcrypt";
 
 // Challenges for filtering round
 const challenges = [
@@ -41,13 +42,17 @@ const signup = async ({
   const otp = generateOTP();
   const otpExpires = getOTPExpiry();
 
+  // Hash password and OTP
+  const hashedPassword = await bcrypt.hash(password, 12);
+  const hashedOTP = await bcrypt.hash(otp, 12);
+
   const user = await User.create({
     username,
     email,
-    password,
+    password: hashedPassword,
     universityName,
     phoneNumber,
-    otp,
+    otp: hashedOTP,
     otpExpires,
   });
 
@@ -70,11 +75,18 @@ const verifyOtp = async ({ email, otp }) => {
   if (!user) throw new AppError("User not found", 400);
   if (user.isVerified) throw new AppError("User already verified", 400);
   if (
-    user.otp !== otp ||
-    (user.otpExpires && user.otpExpires.getTime() < Date.now())
+    !user.otp ||
+    !user.otpExpires ||
+    user.otpExpires.getTime() < Date.now()
   ) {
     throw new AppError("Invalid or expired OTP", 400);
   }
+
+  const isOTPValid = await bcrypt.compare(otp, user.otp);
+  if (!isOTPValid) {
+    throw new AppError("Invalid or expired OTP", 400);
+  }
+
   user.isVerified = true;
   user.otp = undefined;
   user.otpExpires = undefined;
@@ -87,8 +99,9 @@ const login = async ({ email, password }) => {
   const user = await User.findOne({ email });
   if (!user) throw new AppError("Invalid credentials", 400);
   if (!user.isVerified) throw new AppError("Account not verified", 400);
-  if (user.password !== password)
-    throw new AppError("Invalid credentials", 400);
+
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+  if (!isPasswordValid) throw new AppError("Invalid credentials", 400);
 
   const token = generateToken({ id: user._id });
   return { token, message: "Login successful" };
@@ -101,7 +114,9 @@ const forgetPassword = async ({ email }) => {
 
   const otp = generateOTP();
   const otpExpires = getOTPExpiry();
-  user.otp = otp;
+  const hashedOTP = await bcrypt.hash(otp, 12);
+
+  user.otp = hashedOTP;
   user.otpExpires = otpExpires;
   await user.save();
   try {
@@ -128,7 +143,9 @@ const resetPassword = async ({ email, newPassword }) => {
   if (!user) throw new AppError("User not found", 400);
   if (!user.isVerified)
     throw new AppError("OTP not verified for this user", 400);
-  user.password = newPassword;
+
+  const hashedPassword = await bcrypt.hash(newPassword, 12);
+  user.password = hashedPassword;
   await user.save();
   return { message: "Password reset successful" };
 };
@@ -140,9 +157,12 @@ const changePassword = async (
 ) => {
   const user = await User.findById(userId);
   if (!user) throw new AppError("User not found", 404);
-  if (user.password !== currentPassword)
-    throw new AppError("Current password is incorrect", 400);
-  user.password = newPassword;
+
+  const isCurrentPasswordValid = await bcrypt.compare(currentPassword, user.password);
+  if (!isCurrentPasswordValid) throw new AppError("Current password is incorrect", 400);
+
+  const hashedNewPassword = await bcrypt.hash(newPassword, 12);
+  user.password = hashedNewPassword;
   await user.save();
   return { message: "Password changed successfully" };
 };
