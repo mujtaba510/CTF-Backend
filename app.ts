@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 import authRoutes from "./routes/auth.ts";
 import userRoutes from "./routes/users.ts";
 import adminRoutes from "./routes/admin.ts";
+import challengeRoutes from "./routes/challenges.ts";
 import cors from "cors";
 import morgan from "morgan";
 import swaggerUi from "swagger-ui-express";
@@ -37,6 +38,7 @@ connectDB();
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/challenges", challengeRoutes);
 
 // Swagger UI
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
