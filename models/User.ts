@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema<IUser>({
     otpExpires: { type: Date },
     isVerified: { type: Boolean, default: false },
     role: { type: String, default: 'user' },
-    isEligible: { type: Boolean, default: false },
+    isEligible: { type: Boolean, default: true },
     assignedChallenge: { type: Number, default: null },
 }, { timestamps: true });
 
