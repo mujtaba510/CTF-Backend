@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import asyncHandler from "../middleware/asyncHandler.ts";
 import * as authManager from "../managers/authManager.ts";
+import AppError from "../utils/AppError.ts";
 import {
   signupSchema,
   otpSchema,
@@ -301,6 +302,79 @@ const userInfo = asyncHandler(
   }
 );
 
+// Get challenge
+/**
+ * @swagger
+ * /api/auth/get-challenge:
+ *   get:
+ *     summary: Get assigned challenge for filtering round
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Challenge retrieved
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 link:
+ *                   type: string
+ *                   example: http://example.com
+ */
+const getChallenge = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const challenge = await authManager.getChallenge(req.user);
+    return res.status(200).json({ success: true, link: challenge.link });
+  }
+);
+
+// Verify flag
+/**
+ * @swagger
+ * /api/auth/verify-flag:
+ *   post:
+ *     summary: Verify filtering flag
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               flag:
+ *                 type: string
+ *                 example: flag{filter1}
+ *     responses:
+ *       200:
+ *         description: Flag verified
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ */
+const verifyFlag = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { flag } = req.body;
+    if (!flag) throw new AppError("Flag is required", 400);
+    const result = await authManager.verifyFlag(req.user, flag);
+    return res.status(200).json(result);
+  }
+);
+
 export default {
   signup,
   verifyOTP,
@@ -310,4 +384,6 @@ export default {
   changePassword,
   logout,
   userInfo,
+  getChallenge,
+  verifyFlag,
 };

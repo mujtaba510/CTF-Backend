@@ -6,6 +6,13 @@ import generateOTP from "../utils/generateOTP.ts";
 import generateToken from "../utils/generateToken.ts";
 import { getOTPExpiry } from "../utils/otpExpiry.ts";
 
+// Challenges for filtering round
+const challenges = [
+  { link: 'http://example1.com', flag: 'flag{filter1}' },
+  { link: 'http://example2.com', flag: 'flag{filter2}' },
+  { link: 'http://example3.com', flag: 'flag{filter3}' },
+];
+
 interface SignupData {
   username: string;
   email: string;
@@ -151,6 +158,30 @@ const userInfo = (userData: IUser) => {
   }
   return { success: true, userData };
 };
+
+// Get challenge for user
+const getChallenge = async (user: IUser) => {
+  if (user.assignedChallenge === null || user.assignedChallenge === undefined) {
+    const random = Math.floor(Math.random() * 3);
+    user.assignedChallenge = random;
+    await user.save();
+  }
+  return challenges[user.assignedChallenge];
+};
+
+// Verify filtering flag
+const verifyFlag = async (user: IUser, flag: string) => {
+  if (user.assignedChallenge === null || user.assignedChallenge === undefined) {
+    throw new AppError("No challenge assigned", 400);
+  }
+  if (challenges[user.assignedChallenge].flag === flag.trim()) {
+    user.isEligible = true;
+    await user.save();
+    return { success: true, message: "Flag verified, you are now eligible for the CTF" };
+  }
+  return { success: false, message: "Incorrect flag" };
+};
+
 export {
   signup,
   verifyOtp,
@@ -159,4 +190,6 @@ export {
   resetPassword,
   changePassword,
   userInfo,
+  getChallenge,
+  verifyFlag,
 };

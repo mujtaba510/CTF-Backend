@@ -10,6 +10,8 @@ export interface IUser extends Document {
     otpExpires?: Date;
     isVerified: boolean;
     role?: string;
+    isEligible?: boolean;
+    assignedChallenge?: number;
 }
 
 const userSchema = new mongoose.Schema<IUser>({
@@ -22,6 +24,8 @@ const userSchema = new mongoose.Schema<IUser>({
     otpExpires: { type: Date },
     isVerified: { type: Boolean, default: false },
     role: { type: String, default: 'user' },
+    isEligible: { type: Boolean, default: false },
+    assignedChallenge: { type: Number, default: null },
 }, { timestamps: true });
 
 export default mongoose.model<IUser>('User', userSchema);

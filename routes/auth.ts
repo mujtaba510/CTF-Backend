@@ -27,4 +27,10 @@ router.post("/logout", authenticate, authController.logout);
 // Get logged-in user info
 router.get("/user", authenticate, authController.userInfo);
 
+// Get challenge
+router.get("/get-challenge", authenticate, authController.getChallenge);
+
+// Verify flag
+router.post("/verify-flag", authenticate, authController.verifyFlag);
+
 export default router;
