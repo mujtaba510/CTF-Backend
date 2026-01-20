@@ -12,4 +12,12 @@ router.get(
   userController.getUserProfile
 );
 
+// Search users (for team invites)
+router.get(
+  "/search",
+  authenticate,
+  authorize("user", "admin"),
+  userController.searchUsers
+);
+
 export default router;
