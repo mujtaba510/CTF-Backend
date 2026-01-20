@@ -55,6 +55,17 @@ const submitFlag = async (user: IUser, machineId: string, flag: string) => {
     throw new AppError("Challenge not found", 404);
   }
 
+  // Check if this user has already submitted a correct flag for this challenge
+  const userPreviousCorrectSubmission = await ChallengeSubmission.findOne({ 
+    userId: user._id, 
+    machineId, 
+    isCorrect: true 
+  });
+
+  if (userPreviousCorrectSubmission) {
+    throw new AppError("You have already solved this challenge", 400);
+  }
+
   // Check if flag is correct
   const isCorrect = challenge.flag === flag.trim();
 
@@ -108,8 +119,15 @@ const getUserStats = async (userId: string) => {
   };
 };
 
+// Get user's solved challenges (machine IDs)
+const getUserSolvedChallenges = async (userId: string) => {
+  const submissions = await ChallengeSubmission.find({ userId, isCorrect: true }).select('machineId');
+  return submissions.map(sub => sub.machineId);
+};
+
 export {
   getChallenges,
   submitFlag,
   getUserStats,
+  getUserSolvedChallenges,
 };

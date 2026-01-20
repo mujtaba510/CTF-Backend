@@ -28,4 +28,12 @@ router.get(
   challengeController.getUserStats
 );
 
+// Get user's solved challenges
+router.get(
+  "/solved",
+  authenticate,
+  authorize("user", "admin"),
+  challengeController.getUserSolvedChallenges
+);
+
 export default router;

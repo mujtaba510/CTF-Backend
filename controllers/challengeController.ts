@@ -80,8 +80,29 @@ const getUserStats = asyncHandler(
   }
 );
 
+// Get user's solved challenges
+/**
+ * @swagger
+ * /api/challenges/solved:
+ *   get:
+ *     summary: Get list of challenges solved by the user
+ *     tags: [Challenges]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: User's solved challenges retrieved successfully
+ */
+const getUserSolvedChallenges = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const solvedChallenges = await challengeManager.getUserSolvedChallenges(req.user._id.toString());
+    return res.status(200).json({ success: true, solvedChallenges });
+  }
+);
+
 export default {
   getChallenges,
   submitFlag,
   getUserStats,
+  getUserSolvedChallenges,
 };
