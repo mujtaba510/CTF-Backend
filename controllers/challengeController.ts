@@ -47,7 +47,7 @@ const getChallenges = asyncHandler(
  *       200:
  *         description: Flag accepted
  *       400:
- *         description: Incorrect flag or already solved
+ *         description: Incorrect flag
  */
 const submitFlag = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {

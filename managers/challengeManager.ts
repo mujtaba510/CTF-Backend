@@ -15,20 +15,31 @@ const challenges = [
 
 // Get all challenges with solver information
 const getChallenges = async () => {
-  // Get all submissions
-  const submissions = await ChallengeSubmission.find().populate('userId', 'username');
+  // Get all correct submissions
+  const submissions = await ChallengeSubmission.find({ isCorrect: true }).populate('userId', 'username').sort({ solvedAt: 1 });
+  
+  // Group submissions by machineId and find the first solver
+  const firstSolvers = new Map();
+  submissions.forEach(sub => {
+    if (!firstSolvers.has(sub.machineId)) {
+      firstSolvers.set(sub.machineId, {
+        username: (sub.userId as any).username,
+        solvedAt: sub.solvedAt
+      });
+    }
+  });
   
   // Map challenges with solver info
   const challengesWithSolvers = challenges.map(challenge => {
-    const submission = submissions.find(sub => sub.machineId === challenge.id);
+    const solver = firstSolvers.get(challenge.id);
     return {
       id: challenge.id,
       name: challenge.name,
       description: challenge.description,
       link: challenge.link,
-      solver: submission ? {
-        username: (submission.userId as any).username,
-        solvedAt: submission.solvedAt
+      firstSolver: solver ? {
+        username: solver.username,
+        solvedAt: solver.solvedAt
       } : null
     };
   });
@@ -45,34 +56,48 @@ const submitFlag = async (user: IUser, machineId: string, flag: string) => {
   }
 
   // Check if flag is correct
-  if (challenge.flag !== flag.trim()) {
-    throw new AppError("Incorrect flag", 400);
+  const isCorrect = challenge.flag === flag.trim();
+
+  if (!isCorrect) {
+    return {
+      success: false,
+      message: "Invalid flag",
+    };
   }
 
-  // Check if already solved by someone
-  const existingSubmission = await ChallengeSubmission.findOne({ machineId });
-  if (existingSubmission) {
-    const solver = await User.findById(existingSubmission.userId);
-    throw new AppError(`This challenge has already been solved by ${solver?.username}`, 400);
-  }
+  // Check if already solved by someone (find first correct submission)
+  const existingCorrectSubmission = await ChallengeSubmission.findOne({ machineId, isCorrect: true }).sort({ solvedAt: 1 }).populate('userId', 'username');
+  const isFirstSolver = !existingCorrectSubmission;
 
-  // Create new submission
+  // Create new submission (only for correct flags)
   const submission = await ChallengeSubmission.create({
     userId: user._id,
     machineId,
     submittedFlag: flag.trim(),
+    isCorrect,
   });
 
-  return {
-    success: true,
-    message: "Congratulations! You are the first to solve this challenge",
-  };
+  if (isFirstSolver) {
+    return {
+      success: true,
+      message: "Congratulations! You are the first to solve this challenge",
+      isFirstSolver: true
+    };
+  } else {
+    const firstSolver = existingCorrectSubmission.userId as any;
+    return {
+      success: true,
+      message: `Flag is correct. This challenge was first solved by ${firstSolver.username}`,
+      isFirstSolver: false,
+      firstSolver: firstSolver.username
+    };
+  }
 };
 
 // Get user's solved machines count
 const getUserStats = async (userId: string) => {
-  const solvedCount = await ChallengeSubmission.countDocuments({ userId });
-  const submissions = await ChallengeSubmission.find({ userId }).select('machineId solvedAt');
+  const solvedCount = await ChallengeSubmission.countDocuments({ userId, isCorrect: true });
+  const submissions = await ChallengeSubmission.find({ userId, isCorrect: true }).select('machineId solvedAt');
   
   return {
     totalSolved: solvedCount,
