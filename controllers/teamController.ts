@@ -6,7 +6,9 @@ import { createTeamSchema, inviteUserSchema } from "../schemaValidation/team.sch
 
 export const listTeams = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const result = await teamManager.listTeams(req.user!);
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 1;
+    const result = await teamManager.listTeams(req.user!, page, limit);
     res.status(200).json(result);
   }
 );

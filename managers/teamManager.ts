@@ -43,9 +43,16 @@ const ensureNotInAnyTeam = async (userId: string) => {
   }
 };
 
-export const listTeams = async (currentUser: IUser) => {
+export const listTeams = async (currentUser: IUser, page: number = 1, limit: number = 12) => {
+  const skip = (page - 1) * limit;
+  
+  const totalTeams = await Team.countDocuments({});
+  const totalPages = Math.ceil(totalTeams / limit);
+  
   const teams = await Team.find({})
     .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit)
     .populate("owner", "_id username")
     .populate("members", "_id username")
     .lean();
@@ -86,7 +93,14 @@ export const listTeams = async (currentUser: IUser) => {
     };
   });
 
-  return { success: true, teams: mapped };
+  return { 
+    success: true, 
+    teams: mapped,
+    nextPage: page < totalPages ? page + 1 : null,
+    totalPages,
+    currentPage: page,
+    totalTeams
+  };
 };
 
 export const createTeam = async (
