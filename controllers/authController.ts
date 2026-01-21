@@ -111,9 +111,18 @@ export const login = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const validated = loginSchema.parse(req.body);
     const { token, message } = await authManager.login(validated);
+
+    const sameSite = (process.env.COOKIE_SAMESITE ?? "lax") as
+      | "lax"
+      | "strict"
+      | "none";
+
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
+      sameSite,
+      ...(process.env.COOKIE_DOMAIN ? { domain: process.env.COOKIE_DOMAIN } : {}),
+      path: "/",
       maxAge: 24 * 60 * 60 * 1000,
     }); // 1 day
     res.json({ message });
@@ -255,7 +264,10 @@ export const changePassword = asyncHandler(
  */
 export const logout = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    res.clearCookie("token");
+    res.clearCookie("token", {
+      ...(process.env.COOKIE_DOMAIN ? { domain: process.env.COOKIE_DOMAIN } : {}),
+      path: "/",
+    });
     res.json({ message: "Logout successful" });
   }
 );
