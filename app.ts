@@ -9,6 +9,7 @@ import userRoutes from "./routes/users.ts";
 import adminRoutes from "./routes/admin.ts";
 import challengeRoutes from "./routes/challenges.ts";
 import teamRoutes from "./routes/teams.ts";
+import stallsRoutes from "./routes/stalls.ts";
 import cors from "cors";
 import morgan from "morgan";
 import swaggerUi from "swagger-ui-express";
@@ -79,6 +80,7 @@ const requireDb = (req: Request, res: Response, next: NextFunction) => {
 app.use("/api/auth", requireDb, authRoutes);
 app.use("/api/users", requireDb, userRoutes);
 app.use("/api/admin", requireDb, adminRoutes);
+app.use("/api/stalls", requireDb, stallsRoutes);
 
 // Health (useful for nginx / uptime checks)
 app.get("/api/health", (req: Request, res: Response) => {
