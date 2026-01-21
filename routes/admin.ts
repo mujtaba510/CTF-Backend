@@ -8,7 +8,7 @@ import authorize from "../middleware/authorize.ts";
 router.get(
   "/users",
   authenticate,
-  authorize("admin"),
+  authorize("admin", "user"),
   adminController.getUsers
 );
 

@@ -54,4 +54,12 @@ export const getUserProfile = asyncHandler(
   }
 );
 
-export default { getUserProfile };
+export const searchUsers = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const q = (req.query.q as string) || "";
+    const result = await userManager.searchUsers(q, req.user);
+    res.status(200).json(result);
+  }
+);
+
+export default { getUserProfile, searchUsers };

@@ -7,6 +7,8 @@ import cookieParser from "cookie-parser";
 import authRoutes from "./routes/auth.ts";
 import userRoutes from "./routes/users.ts";
 import adminRoutes from "./routes/admin.ts";
+import challengeRoutes from "./routes/challenges.ts";
+import teamRoutes from "./routes/teams.ts";
 import cors from "cors";
 import morgan from "morgan";
 import swaggerUi from "swagger-ui-express";
@@ -54,6 +56,11 @@ app.use(
 connectDB();
 
 // Routes
+app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/challenges", challengeRoutes);
+app.use("/api/teams", teamRoutes);
 const requireDb = (req: Request, res: Response, next: NextFunction) => {
   // Always allow CORS preflight
   if (req.method === "OPTIONS") return next();
