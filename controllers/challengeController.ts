@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import asyncHandler from "../middleware/asyncHandler.ts";
 import * as challengeManager from "../managers/challengeManager.ts";
+import * as challengeFileSubmissionManager from "../managers/challengeFileSubmissionManager.ts";
 import AppError from "../utils/AppError.ts";
 
 // Get all challenges
@@ -100,9 +101,51 @@ const getUserSolvedChallenges = asyncHandler(
   }
 );
 
+// Submit challenge files
+const submitChallengeFiles = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const challengeId = req.params.challengeId;
+    if (!challengeId) {
+      throw new AppError("Challenge ID is required", 400);
+    }
+
+    const files = (req.files as Express.Multer.File[] | undefined) ?? [];
+    if (!files.length) {
+      throw new AppError("Please upload at least one file", 400);
+    }
+
+    const submission = await challengeFileSubmissionManager.createSubmission({
+      userId: req.user._id.toString(),
+      challengeId,
+      files,
+    });
+
+    return res.status(201).json({ success: true, submission });
+  }
+);
+
+// Get current user's submissions for a challenge
+const getMyChallengeSubmissions = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const challengeId = req.params.challengeId;
+    if (!challengeId) {
+      throw new AppError("Challenge ID is required", 400);
+    }
+
+    const submissions = await challengeFileSubmissionManager.getMySubmissionsForChallenge({
+      userId: req.user._id.toString(),
+      challengeId,
+    });
+
+    return res.status(200).json({ success: true, submissions });
+  }
+);
+
 export default {
   getChallenges,
   submitFlag,
   getUserStats,
   getUserSolvedChallenges,
+  submitChallengeFiles,
+  getMyChallengeSubmissions,
 };

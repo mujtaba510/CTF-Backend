@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { ZodError } from "zod";
+import multer from "multer";
 import AppError from "../utils/AppError.ts";
 
 const errorHandler = (
@@ -16,6 +17,20 @@ const errorHandler = (
     error.statusCode = 400;
     error.status = "fail";
     error.message = err.issues[0].message; // First error message
+  }
+  // Handle Multer upload errors
+  else if (err instanceof multer.MulterError) {
+    error.statusCode = 400;
+    error.status = "fail";
+
+    if (err.code === "LIMIT_FILE_SIZE") {
+      error.statusCode = 413;
+      error.message = "File too large. Maximum allowed size is 500MB.";
+    } else if (err.code === "LIMIT_FILE_COUNT") {
+      error.message = "Too many files uploaded.";
+    } else {
+      error.message = err.message;
+    }
   }
   // Handle known errors (AppError)
   else if (!(err instanceof AppError)) {

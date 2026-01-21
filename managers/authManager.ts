@@ -18,7 +18,7 @@ interface SignupData {
   username: string;
   email: string;
   password: string;
-  // universityName?: string;
+  universityName?: string;
   // phoneNumber: string;
 }
 
@@ -27,7 +27,7 @@ const signup = async ({
   username,
   email,
   password,
-  // universityName,
+  universityName,
   // phoneNumber,
 }: SignupData) => {
   if (await User.findOne({ email }))
@@ -50,7 +50,7 @@ const signup = async ({
     username,
     email,
     password: hashedPassword,
-    // universityName,
+    universityName,
     // phoneNumber,
     otp: hashedOTP,
     otpExpires,

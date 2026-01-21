@@ -8,7 +8,7 @@ const signupSchema = z.object({
     .string()
     .min(6, { message: "Password must be at least 6 characters." }),
 
-  // universityName: z.string().optional(),
+  universityName: z.string().min(1, { message: "University name is required." }),
   // phoneNumber: z
   //   .string()
   //   .min(11, { message: "Phone number must be at least 11 digits."})
