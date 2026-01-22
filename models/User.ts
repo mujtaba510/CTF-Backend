@@ -4,7 +4,7 @@ export interface IUser extends Document {
     username: string;
     email: string;
     universityName?: string;
-    // phoneNumber?: string;
+    phoneNumber?: string;
     password: string;
     otp?: string;
     otpExpires?: Date;
@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema<IUser>({
     username : { type: String, required: true, unique: true },
     email: { type: String, required: true, unique: true },
     universityName: { type: String, required: false },
-    // phoneNumber: { type: String, unique: true, required: true },
+    phoneNumber: { type: String, unique: true, required: true },
     password: { type: String, required: true },
     otp: { type: String },
     otpExpires: { type: Date },

@@ -19,7 +19,7 @@ interface SignupData {
   email: string;
   password: string;
   universityName?: string;
-  // phoneNumber: string;
+  phoneNumber: string;
 }
 
 // Signup
@@ -28,7 +28,7 @@ const signup = async ({
   email,
   password,
   universityName,
-  // phoneNumber,
+  phoneNumber,
 }: SignupData) => {
   if (await User.findOne({ email }))
     throw new AppError("User already exists", 400);
@@ -36,8 +36,8 @@ const signup = async ({
   if (await User.findOne({ username }))
     throw new AppError("Username already taken", 400);
 
-  // if (await User.findOne({ phoneNumber }))
-  //   throw new AppError("Phone number already registered", 400);
+  if (await User.findOne({ phoneNumber }))
+    throw new AppError("Phone number already registered", 400);
 
   const otp = generateOTP();
   const otpExpires = getOTPExpiry();
@@ -51,7 +51,7 @@ const signup = async ({
     email,
     password: hashedPassword,
     universityName,
-    // phoneNumber,
+    phoneNumber,
     otp: hashedOTP,
     otpExpires,
   });
