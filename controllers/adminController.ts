@@ -1,10 +1,10 @@
 import type { Request, Response, NextFunction } from "express";
-import asyncHandler from "../middleware/asyncHandler.ts";
-import * as adminManager from "../managers/adminManager.ts";
+import asyncHandler from "../middleware/asyncHandler.js";
+import * as adminManager from "../managers/adminManager.js";
 import {
   getUsersQuerySchema,
   deleteUserSchema,
-} from "../schemaValidation/admin.schema.ts";
+} from "../schemaValidation/admin.schema.js";
 
 // Get paginated users
 /**
@@ -113,3 +113,4 @@ export const deleteUser = asyncHandler(
 );
 
 export default { getUsers, deleteUser };
+

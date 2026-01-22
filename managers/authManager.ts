@@ -1,10 +1,10 @@
-import User from "../models/User.ts";
-import type { IUser } from "../models/User.ts";
-import sendEmail from "../services/emailService.ts";
-import AppError from "../utils/AppError.ts";
-import generateOTP from "../utils/generateOTP.ts";
-import generateToken from "../utils/generateToken.ts";
-import { getOTPExpiry } from "../utils/otpExpiry.ts";
+import User from "../models/User.js";
+import type { IUser } from "../models/User.js";
+import sendEmail from "../services/emailService.js";
+import AppError from "../utils/AppError.js";
+import generateOTP from "../utils/generateOTP.js";
+import generateToken from "../utils/generateToken.js";
+import { getOTPExpiry } from "../utils/otpExpiry.js";
 import bcrypt from "bcrypt";
 
 // Challenges for filtering round
@@ -213,3 +213,4 @@ export {
   getChallenge,
   verifyFlag,
 };
+

@@ -1,7 +1,7 @@
-import User from "../models/User.ts";
-import ChallengeSubmission from "../models/ChallengeSubmission.ts";
-import type { IUser } from "../models/User.ts";
-import AppError from "../utils/AppError.ts";
+import User from "../models/User.js";
+import ChallengeSubmission from "../models/ChallengeSubmission.js";
+import type { IUser } from "../models/User.js";
+import AppError from "../utils/AppError.js";
 
 // Dummy challenges data
 const challenges = [
@@ -131,3 +131,4 @@ export {
   getUserStats,
   getUserSolvedChallenges,
 };
+

@@ -1,6 +1,6 @@
 import { ZodError } from "zod";
 import type { Request, Response, NextFunction } from "express";
-import AppError from "../utils/AppError.ts";
+import AppError from "../utils/AppError.js";
 
 // Pass a Zod schema to this middleware
 const validate =
@@ -17,3 +17,4 @@ const validate =
   };
 
 export default validate;
+

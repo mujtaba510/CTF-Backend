@@ -7,3 +7,4 @@ const generateToken = (payload: object) => {
 };
 
 export default generateToken;
+

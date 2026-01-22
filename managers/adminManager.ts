@@ -1,6 +1,6 @@
-import User from "../models/User.ts";
-import type { IUser } from "../models/User.ts";
-import AppError from "../utils/AppError.ts";
+import User from "../models/User.js";
+import type { IUser } from "../models/User.js";
+import AppError from "../utils/AppError.js";
 
 // Get paginated users (admin only)
 const getUsers = async (page: number, limit: number) => {
@@ -25,3 +25,4 @@ const deleteUser = async (id: string, currentUser: IUser) => {
 };
 
 export { getUsers, deleteUser };
+

@@ -1,19 +1,19 @@
 import express from "express";
 import type { Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
-import connectDB from "./config/db.ts";
-import errorHandler from "./middleware/errorHandler.ts";
+import connectDB from "./config/db.js";
+import errorHandler from "./middleware/errorHandler.js";
 import cookieParser from "cookie-parser";
-import authRoutes from "./routes/auth.ts";
-import userRoutes from "./routes/users.ts";
-import adminRoutes from "./routes/admin.ts";
-import challengeRoutes from "./routes/challenges.ts";
-import teamRoutes from "./routes/teams.ts";
-import stallsRoutes from "./routes/stalls.ts";
+import authRoutes from "./routes/auth.js";
+import userRoutes from "./routes/users.js";
+import adminRoutes from "./routes/admin.js";
+import challengeRoutes from "./routes/challenges.js";
+import teamRoutes from "./routes/teams.js";
+import stallsRoutes from "./routes/stalls.js";
 import cors from "cors";
 import morgan from "morgan";
 import swaggerUi from "swagger-ui-express";
-import { swaggerSpec } from "./config/swagger.ts";
+import { swaggerSpec } from "./config/swagger.js";
 import mongoose from "mongoose";
 
 // Load env vars
@@ -111,3 +111,4 @@ app.get("/", (req: Request, res: Response) => {
 app.use(errorHandler);
 
 app.listen(PORT, HOST, () => console.log(`Server running on http://${HOST}:${PORT}`));
+

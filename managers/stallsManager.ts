@@ -101,3 +101,4 @@ class StallsManager {
 }
 
 export default new StallsManager();
+

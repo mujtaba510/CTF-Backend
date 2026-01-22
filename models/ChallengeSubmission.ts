@@ -20,3 +20,4 @@ const challengeSubmissionSchema = new mongoose.Schema<IChallengeSubmission>({
 // challengeSubmissionSchema.index({ machineId: 1 }, { unique: true });
 
 export default mongoose.model<IChallengeSubmission>('ChallengeSubmission', challengeSubmissionSchema);
+

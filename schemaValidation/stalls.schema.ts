@@ -56,3 +56,4 @@ export const createStallsSubmissionSchema = z.object({
 export type CreateStallsSubmissionInput = z.infer<
     typeof createStallsSubmissionSchema
 >;
+

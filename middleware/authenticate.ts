@@ -1,8 +1,8 @@
 import jwt from "jsonwebtoken";
 import type { Request, Response, NextFunction } from "express";
-import AppError from "../utils/AppError.ts";
-import User from "../models/User.ts";
-import asyncHandler from "./asyncHandler.ts";
+import AppError from "../utils/AppError.js";
+import User from "../models/User.js";
+import asyncHandler from "./asyncHandler.js";
 
 const authenticate = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -28,3 +28,4 @@ const authenticate = asyncHandler(
 );
 
 export default authenticate;
+

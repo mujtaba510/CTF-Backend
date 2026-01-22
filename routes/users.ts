@@ -1,8 +1,8 @@
 import express from "express";
 const router = express.Router();
-import userController from "../controllers/userController.ts";
-import authenticate from "../middleware/authenticate.ts";
-import authorize from "../middleware/authorize.ts";
+import userController from "../controllers/userController.js";
+import authenticate from "../middleware/authenticate.js";
+import authorize from "../middleware/authorize.js";
 
 // Get user profile by ID
 router.get(
@@ -21,3 +21,4 @@ router.get(
 );
 
 export default router;
+

@@ -1,8 +1,8 @@
 import type { Request, Response, NextFunction } from "express";
-import asyncHandler from "../middleware/asyncHandler.ts";
-import * as challengeManager from "../managers/challengeManager.ts";
-import * as challengeFileSubmissionManager from "../managers/challengeFileSubmissionManager.ts";
-import AppError from "../utils/AppError.ts";
+import asyncHandler from "../middleware/asyncHandler.js";
+import * as challengeManager from "../managers/challengeManager.js";
+import * as challengeFileSubmissionManager from "../managers/challengeFileSubmissionManager.js";
+import AppError from "../utils/AppError.js";
 
 // Get all challenges
 /**
@@ -149,3 +149,4 @@ export default {
   submitChallengeFiles,
   getMyChallengeSubmissions,
 };
+

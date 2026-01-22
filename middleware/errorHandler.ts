@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import { ZodError } from "zod";
 import multer from "multer";
-import AppError from "../utils/AppError.ts";
+import AppError from "../utils/AppError.js";
 
 const errorHandler = (
   err: any,
@@ -48,3 +48,4 @@ const errorHandler = (
 };
 
 export default errorHandler;
+

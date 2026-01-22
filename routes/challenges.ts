@@ -1,9 +1,9 @@
 import express from "express";
 const router = express.Router();
-import challengeController from "../controllers/challengeController.ts";
-import authenticate from "../middleware/authenticate.ts";
-import authorize from "../middleware/authorize.ts";
-import { uploadChallengeSubmission } from "../middleware/uploadChallengeSubmission.ts";
+import challengeController from "../controllers/challengeController.js";
+import authenticate from "../middleware/authenticate.js";
+import authorize from "../middleware/authorize.js";
+import { uploadChallengeSubmission } from "../middleware/uploadChallengeSubmission.js";
 
 // Get all challenges with solver info
 router.get(
@@ -55,3 +55,4 @@ router.get(
 );
 
 export default router;
+

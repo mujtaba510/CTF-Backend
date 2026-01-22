@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
-import type { IUser } from "../models/User.ts";
-import User from "../models/User.ts";
-import Team from "../models/Team.ts";
-import AppError from "../utils/AppError.ts";
+import type { IUser } from "../models/User.js";
+import User from "../models/User.js";
+import Team from "../models/Team.js";
+import AppError from "../utils/AppError.js";
 
 const MAX_TEAM_SIZE = 3;
 
@@ -416,3 +416,4 @@ export const deleteTeam = async (currentUser: IUser, teamId: string) => {
   await Team.deleteOne({ _id: team._id });
   return { success: true, message: "Team deleted" };
 };
+

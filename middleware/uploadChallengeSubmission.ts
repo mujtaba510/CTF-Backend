@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import crypto from "crypto";
 import multer from "multer";
-import AppError from "../utils/AppError.ts";
+import AppError from "../utils/AppError.js";
 
 const MAX_FILE_SIZE_BYTES = 500 * 1024 * 1024; // 500MB
 const MAX_FILES_PER_SUBMISSION = 10;
@@ -90,3 +90,4 @@ export const uploadChallengeSubmission = multer({
     files: MAX_FILES_PER_SUBMISSION,
   },
 });
+

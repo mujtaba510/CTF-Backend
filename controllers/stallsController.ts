@@ -69,3 +69,4 @@ class StallsController {
 }
 
 export default new StallsController();
+

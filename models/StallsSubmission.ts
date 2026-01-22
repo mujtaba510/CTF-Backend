@@ -66,3 +66,4 @@ const StallsSubmission = mongoose.model<IStallsSubmission>(
 );
 
 export default StallsSubmission;
+
