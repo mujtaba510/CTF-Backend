@@ -42,7 +42,13 @@ const swaggerOptions = {
       schemas: {
         SignupRequest: {
           type: "object",
-          required: ["username", "email", "password", "universityName", "phoneNumber"],
+          required: [
+            "username",
+            "email",
+            "password",
+            "universityName",
+            "phoneNumber",
+          ],
           properties: {
             username: {
               type: "string",
@@ -183,7 +189,7 @@ const swaggerOptions = {
             "productName",
             "productDescription",
             "phoneNumber",
-            "teamMembers"
+            "teamMembers",
           ],
           properties: {
             name: {
@@ -213,7 +219,8 @@ const swaggerOptions = {
               type: "string",
               minLength: 10,
               maxLength: 1000,
-              example: "This is an innovative product that solves real-world problems.",
+              example:
+                "This is an innovative product that solves real-world problems.",
             },
             phoneNumber: {
               type: "string",
