@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "npm install && tsc",
     "start": "node dist/app.js",
     "dev": "tsx watch app.ts"
   },
