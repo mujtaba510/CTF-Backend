@@ -56,19 +56,19 @@ const signup = async ({
     otpExpires,
   });
 
-  try {
-    await sendEmail(email, "Your OTP Code", `Your OTP code is: ${otp}`);
-  } catch (error) {
-    console.error("Email sending error:", error);
-    await User.updateOne(
-      { _id: user._id },
-      { $unset: { otp: "", otpExpires: "" } },
-    );
-    throw new AppError(
-      `Failed to send OTP email: ${error.message || error}`,
-      500,
-    );
-  }
+  // Send email without blocking the response
+  sendEmail(email, "Your OTP Code", `Your OTP code is: ${otp}`)
+    .then(() => {
+      console.log(`OTP email sent successfully to ${email}`);
+    })
+    .catch((error) => {
+      console.error("Email sending error:", error);
+      // Optionally remove OTP if email fails, but don't block signup
+      User.updateOne(
+        { _id: user._id },
+        { $unset: { otp: "", otpExpires: "" } },
+      ).catch((err) => console.error("Failed to clear OTP:", err));
+    });
 
   return { message: "Signup successful, OTP sent to email" };
 };
