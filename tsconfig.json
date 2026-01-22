@@ -13,9 +13,7 @@
     "noEmit": false,
     "declaration": false,
     "outDir": "./dist",
-    "rootDir": "./",
-    "typeRoots": ["./node_modules/@types"],
-    "types": ["node"]
+    "rootDir": "./"
   },
   "include": ["**/*.ts"],
   "exclude": ["node_modules", "dist"]
