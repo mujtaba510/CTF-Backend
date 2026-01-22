@@ -50,7 +50,7 @@ app.use(
     },
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     credentials: true,
-  })
+  }),
 );
 
 // Connect to DB
@@ -110,5 +110,6 @@ app.get("/", (req: Request, res: Response) => {
 // Error Handler Middleware
 app.use(errorHandler);
 
-app.listen(PORT, HOST, () => console.log(`Server running on http://${HOST}:${PORT}`));
-
+app.listen(PORT, HOST, () =>
+  console.log(`Server running on http://${HOST}:${PORT}`),
+);
