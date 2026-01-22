@@ -58,12 +58,13 @@ const signup = async ({
 
   try {
     await sendEmail(email, "Your OTP Code", `Your OTP code is: ${otp}`);
-  } catch {
+  } catch (error) {
+    console.error("Email sending error:", error);
     await User.updateOne(
       { _id: user._id },
       { $unset: { otp: "", otpExpires: "" } }
     );
-    throw new AppError("Failed to send OTP email", 500);
+    throw new AppError(`Failed to send OTP email: ${error.message || error}`, 500);
   }
 
   return { message: "Signup successful, OTP sent to email" };
@@ -128,10 +129,11 @@ const forgetPassword = async ({ email }) => {
     user.isVerified = false;
     await user.save();
   } catch (emailErr) {
+    console.error("Email sending error:", emailErr);
     user.otp = undefined;
     user.otpExpires = undefined;
     await user.save();
-    throw new AppError("Failed to send OTP email", 500);
+    throw new AppError(`Failed to send OTP email: ${emailErr.message || emailErr}`, 500);
   }
 
   return { message: "OTP sent to email for password reset" };
