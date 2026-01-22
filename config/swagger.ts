@@ -134,7 +134,7 @@ const swaggerOptions = {
       },
     ],
   },
-  apis: ["./controllers/*.ts"], // Path to files with JSDoc comments
+  apis: ["./dist/controllers/*.js", "./controllers/*.ts"], // Path to files with JSDoc comments
 };
 
 const swaggerSpec = swaggerJSDoc(swaggerOptions);
