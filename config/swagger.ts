@@ -16,6 +16,10 @@ const swaggerOptions = {
     ],
     servers: [
       {
+          url: "https://ctf-backend-11.onrender.com",
+          description: "Production server",
+      },
+      {
           url:
             process.env.PUBLIC_BASE_URL?.trim() ||
             `http://localhost:${process.env.PORT || 5000}`,
