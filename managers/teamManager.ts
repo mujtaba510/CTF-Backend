@@ -53,8 +53,8 @@ export const listTeams = async (currentUser: IUser, page: number = 1, limit: num
     .sort({ createdAt: -1 })
     .skip(skip)
     .limit(limit)
-    .populate("owner", "_id username")
-    .populate("members", "_id username")
+    .populate("owner", "_id username email")
+    .populate("members", "_id username email")
     .lean();
 
   const currentUserId = currentUser._id.toString();
