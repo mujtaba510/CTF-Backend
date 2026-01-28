@@ -8,3 +8,4 @@ const getUserProfileSchema = z.object({
 });
 
 export { getUserProfileSchema };
+

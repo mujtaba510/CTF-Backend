@@ -1,8 +1,15 @@
+<<<<<<< HEAD
 import User from "../models/User.ts";
 import ChallengeSubmission from "../models/ChallengeSubmission.ts";
 import Team from "../models/Team.ts";
 import type { IUser } from "../models/User.ts";
 import AppError from "../utils/AppError.ts";
+=======
+import User from "../models/User.js";
+import ChallengeSubmission from "../models/ChallengeSubmission.js";
+import type { IUser } from "../models/User.js";
+import AppError from "../utils/AppError.js";
+>>>>>>> c88ab55bbcc333c38255d9416fce02fe67ac52fd
 
 // Hint costs
 const HINT_COSTS = {
@@ -862,3 +869,4 @@ export {
   getUserSolvedChallenges,
   viewHint,
 };
+

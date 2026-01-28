@@ -50,3 +50,4 @@ export default mongoose.model<IChallengeFileSubmission>(
   "ChallengeFileSubmission",
   challengeFileSubmissionSchema
 );
+

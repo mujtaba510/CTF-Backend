@@ -1,8 +1,8 @@
 import type { Request, Response, NextFunction } from "express";
-import asyncHandler from "../middleware/asyncHandler.ts";
-import validate from "../middleware/validate.ts";
-import * as teamManager from "../managers/teamManager.ts";
-import { createTeamSchema, inviteUserSchema } from "../schemaValidation/team.schema.ts";
+import asyncHandler from "../middleware/asyncHandler.js";
+import validate from "../middleware/validate.js";
+import * as teamManager from "../managers/teamManager.js";
+import { createTeamSchema, inviteUserSchema } from "../schemaValidation/team.schema.js";
 
 export const listTeams = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -117,3 +117,4 @@ export default {
   leaveTeam,
   deleteTeam,
 };
+

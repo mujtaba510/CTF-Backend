@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // import transporter from "../config/email.ts";
 
 // const EMAIL_TIMEOUT_MS = Number(process.env.EMAIL_TIMEOUT_MS ?? 7000);
@@ -32,15 +33,22 @@
 
 
 import transporter from '../config/email.ts';;
+=======
+import transporter from "../config/email.js";
+>>>>>>> c88ab55bbcc333c38255d9416fce02fe67ac52fd
 
-const sendEmail = async (to: string, subject: string, text: string): Promise<void> => {
-    const mailOptions = {
-        from: process.env.EMAIL_USER,
-        to,
-        subject,
-        text,
-    };
-    await transporter.sendMail(mailOptions);
+const sendEmail = async (
+  to: string,
+  subject: string,
+  text: string,
+): Promise<void> => {
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to,
+    subject,
+    text,
+  };
+  await transporter.sendMail(mailOptions);
 };
 
 export default sendEmail;

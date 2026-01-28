@@ -1,6 +1,6 @@
-import User from "../models/User.ts";
-import type { IUser } from "../models/User.ts";
-import AppError from "../utils/AppError.ts";
+import User from "../models/User.js";
+import type { IUser } from "../models/User.js";
+import AppError from "../utils/AppError.js";
 
 // Get user profile by ID
 const getUserProfile = async (id: string, currentUser: IUser) => {
@@ -38,3 +38,4 @@ const searchUsers = async (query: string, currentUser: IUser) => {
 };
 
 export { getUserProfile, searchUsers };
+

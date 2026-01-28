@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
-import asyncHandler from "../middleware/asyncHandler.ts";
-import * as userManager from "../managers/userManager.ts";
-import { getUserProfileSchema } from "../schemaValidation/user.schema.ts";
+import asyncHandler from "../middleware/asyncHandler.js";
+import * as userManager from "../managers/userManager.js";
+import { getUserProfileSchema } from "../schemaValidation/user.schema.js";
 
 // Get user profile by ID
 /**
@@ -63,3 +63,4 @@ export const searchUsers = asyncHandler(
 );
 
 export default { getUserProfile, searchUsers };
+

@@ -1,9 +1,9 @@
 import express from "express";
 const router = express.Router();
 
-import authenticate from "../middleware/authenticate.ts";
-import authorize from "../middleware/authorize.ts";
-import teamController from "../controllers/teamController.ts";
+import authenticate from "../middleware/authenticate.js";
+import authorize from "../middleware/authorize.js";
+import teamController from "../controllers/teamController.js";
 
 router.get("/", authenticate, authorize("user", "admin"), teamController.listTeams);
 
@@ -85,3 +85,4 @@ router.delete(
 );
 
 export default router;
+

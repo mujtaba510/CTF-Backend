@@ -14,3 +14,4 @@ export const createTeamSchema = z.object({
 export const inviteUserSchema = z.object({
   userId: z.string().min(1, { message: "User ID is required." }),
 });
+

@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
-import asyncHandler from "../middleware/asyncHandler.ts";
-import * as authManager from "../managers/authManager.ts";
-import AppError from "../utils/AppError.ts";
+import asyncHandler from "../middleware/asyncHandler.js";
+import * as authManager from "../managers/authManager.js";
+import AppError from "../utils/AppError.js";
 import {
   signupSchema,
   otpSchema,
@@ -9,7 +9,7 @@ import {
   forgetPasswordSchema,
   resetPasswordSchema,
   changePasswordSchema,
-} from "../schemaValidation/auth.schema.ts";
+} from "../schemaValidation/auth.schema.js";
 
 // Signup
 /**
@@ -405,3 +405,4 @@ export default {
   getChallenge,
   verifyFlag,
 };
+

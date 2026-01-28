@@ -1,17 +1,17 @@
-import User from "../models/User.ts";
-import type { IUser } from "../models/User.ts";
-import sendEmail from "../services/emailService.ts";
-import AppError from "../utils/AppError.ts";
-import generateOTP from "../utils/generateOTP.ts";
-import generateToken from "../utils/generateToken.ts";
-import { getOTPExpiry } from "../utils/otpExpiry.ts";
+import User from "../models/User.js";
+import type { IUser } from "../models/User.js";
+import sendEmail from "../services/emailService.js";
+import AppError from "../utils/AppError.js";
+import generateOTP from "../utils/generateOTP.js";
+import generateToken from "../utils/generateToken.js";
+import { getOTPExpiry } from "../utils/otpExpiry.js";
 import bcrypt from "bcrypt";
 
 // Challenges for filtering round
 const challenges = [
-  { link: 'http://example1.com', flag: 'flag{filter1}' },
-  { link: 'http://example2.com', flag: 'flag{filter2}' },
-  { link: 'http://example3.com', flag: 'flag{filter3}' },
+  { link: "http://example1.com", flag: "flag{filter1}" },
+  { link: "http://example2.com", flag: "flag{filter2}" },
+  { link: "http://example3.com", flag: "flag{filter3}" },
 ];
 
 interface SignupData {
@@ -19,7 +19,11 @@ interface SignupData {
   email: string;
   password: string;
   universityName?: string;
+<<<<<<< HEAD
   phoneNumber?: string;
+=======
+  phoneNumber: string;
+>>>>>>> c88ab55bbcc333c38255d9416fce02fe67ac52fd
 }
 
 // Signup
@@ -36,7 +40,11 @@ const signup = async ({
   if (await User.findOne({ username }))
     throw new AppError("Username already taken", 400);
 
+<<<<<<< HEAD
   if (phoneNumber && await User.findOne({ phoneNumber }))
+=======
+  if (await User.findOne({ phoneNumber }))
+>>>>>>> c88ab55bbcc333c38255d9416fce02fe67ac52fd
     throw new AppError("Phone number already registered", 400);
 
  console.log("Creating user:", { username, email, universityName, phoneNumber }); 
@@ -49,12 +57,30 @@ const signup = async ({
     password: hashedPassword,
     universityName,
     phoneNumber,
+<<<<<<< HEAD
     
   });
  user.isVerified = true;
  console.log(user);
  await user.save();
   return { message: "Signup successful" };
+=======
+    otp: hashedOTP,
+    otpExpires,
+  });
+
+  try {
+    await sendEmail(email, "Your OTP Code", `Your OTP code is: ${otp}`);
+  } catch {
+    await User.updateOne(
+      { _id: user._id },
+      { $unset: { otp: "", otpExpires: "" } },
+    );
+    throw new AppError("Failed to send OTP email", 500);
+  }
+
+  return { message: "Signup successful, OTP sent to email" };
+>>>>>>> c88ab55bbcc333c38255d9416fce02fe67ac52fd
 };
 
 // Verify OTP
@@ -62,11 +88,7 @@ const verifyOtp = async ({ email, otp }) => {
   const user = await User.findOne({ email });
   if (!user) throw new AppError("User not found", 400);
   if (user.isVerified) throw new AppError("User already verified", 400);
-  if (
-    !user.otp ||
-    !user.otpExpires ||
-    user.otpExpires.getTime() < Date.now()
-  ) {
+  if (!user.otp || !user.otpExpires || user.otpExpires.getTime() < Date.now()) {
     throw new AppError("Invalid or expired OTP", 400);
   }
 
@@ -111,7 +133,7 @@ const forgetPassword = async ({ email }) => {
     await sendEmail(
       email,
       "Your Password Reset OTP",
-      `Your OTP code is: ${otp}`
+      `Your OTP code is: ${otp}`,
     );
     user.isVerified = false;
     await user.save();
@@ -141,13 +163,17 @@ const resetPassword = async ({ email, newPassword }) => {
 // Change Password
 const changePassword = async (
   { currentPassword, newPassword },
-  userId: string
+  userId: string,
 ) => {
   const user = await User.findById(userId);
   if (!user) throw new AppError("User not found", 404);
 
-  const isCurrentPasswordValid = await bcrypt.compare(currentPassword, user.password);
-  if (!isCurrentPasswordValid) throw new AppError("Current password is incorrect", 400);
+  const isCurrentPasswordValid = await bcrypt.compare(
+    currentPassword,
+    user.password,
+  );
+  if (!isCurrentPasswordValid)
+    throw new AppError("Current password is incorrect", 400);
 
   const hashedNewPassword = await bcrypt.hash(newPassword, 12);
   user.password = hashedNewPassword;
@@ -185,7 +211,10 @@ const verifyFlag = async (user: IUser, flag: string) => {
   if (challenges[user.assignedChallenge].flag === flag.trim()) {
     user.isEligible = true;
     await user.save();
-    return { success: true, message: "Flag verified, you are now eligible for the CTF" };
+    return {
+      success: true,
+      message: "Flag verified, you are now eligible for the CTF",
+    };
   }
   return { success: false, message: "Incorrect flag" };
 };

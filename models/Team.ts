@@ -96,3 +96,4 @@ const teamSchema = new mongoose.Schema<ITeam>(
 );
 
 export default mongoose.model<ITeam>("Team", teamSchema);
+

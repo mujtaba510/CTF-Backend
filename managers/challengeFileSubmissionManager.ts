@@ -1,6 +1,6 @@
 import path from "path";
-import ChallengeFileSubmission from "../models/ChallengeFileSubmission.ts";
-import AppError from "../utils/AppError.ts";
+import ChallengeFileSubmission from "../models/ChallengeFileSubmission.js";
+import AppError from "../utils/AppError.js";
 
 const normalizeStoredPath = (absolutePath: string) => {
   const rel = path.relative(process.cwd(), absolutePath);
@@ -59,3 +59,4 @@ const getMySubmissionsForChallenge = async (params: {
 };
 
 export { createSubmission, getMySubmissionsForChallenge };
+

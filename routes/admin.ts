@@ -1,8 +1,8 @@
 import express from "express";
 const router = express.Router();
-import adminController from "../controllers/adminController.ts";
-import authenticate from "../middleware/authenticate.ts";
-import authorize from "../middleware/authorize.ts";
+import adminController from "../controllers/adminController.js";
+import authenticate from "../middleware/authenticate.js";
+import authorize from "../middleware/authorize.js";
 
 // Get paginated users (admin only)
 router.get(
@@ -61,3 +61,4 @@ router.get(
 );
 
 export default router;
+

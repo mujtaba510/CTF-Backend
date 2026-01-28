@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import AppError from "../utils/AppError.ts";
+import AppError from "../utils/AppError.js";
 
 // Usage: authorize('admin'), authorize('analyst'), authorize('admin', 'analyst')
 const authorize = (...roles: string[]) => {
@@ -12,3 +12,4 @@ const authorize = (...roles: string[]) => {
 };
 
 export default authorize;
+

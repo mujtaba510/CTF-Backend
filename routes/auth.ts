@@ -1,7 +1,7 @@
 import express from "express";
 const router = express.Router();
-import authController from "../controllers/authController.ts";
-import authenticate from "../middleware/authenticate.ts";
+import authController from "../controllers/authController.js";
+import authenticate from "../middleware/authenticate.js";
 
 // Signup
 router.post("/signup", authController.signup);
@@ -34,3 +34,4 @@ router.get("/get-challenge", authenticate, authController.getChallenge);
 router.post("/verify-flag", authenticate, authController.verifyFlag);
 
 export default router;
+

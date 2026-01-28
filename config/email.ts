@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // import nodemailer from 'nodemailer';
 // import dotenv from 'dotenv';
 // dotenv.config();
@@ -20,14 +21,18 @@
 
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
+=======
+import nodemailer from "nodemailer";
+import dotenv from "dotenv";
+>>>>>>> c88ab55bbcc333c38255d9416fce02fe67ac52fd
 dotenv.config();
 
 const transporter = nodemailer.createTransport({
-    service: 'gmail', // or your email provider
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-    },
+  service: "gmail", // or your email provider
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
 });
 
 export default transporter;
