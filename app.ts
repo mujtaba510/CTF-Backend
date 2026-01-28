@@ -1,4 +1,5 @@
 import express from "express";
+import path from "path";
 import type { Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
 import connectDB from "./config/db.ts";
@@ -10,7 +11,6 @@ import adminRoutes from "./routes/admin.ts";
 import challengeRoutes from "./routes/challenges.ts";
 import teamRoutes from "./routes/teams.ts";
 import stallsRoutes from "./routes/stalls.ts";
-import cors from "cors";
 import morgan from "morgan";
 import swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "./config/swagger.ts";
@@ -31,37 +31,46 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(morgan("dev"));
 
+const normalizeOrigin = (value: string) => value.trim().replace(/\/+$/, "");
+
 const allowedOrigins = (process.env.CORS_ORIGIN ?? "")
   .split(",")
-  .map((value) => value.trim())
+  .map(normalizeOrigin)
   .filter(Boolean);
 
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      // Requests like curl/same-origin may not include Origin
-      if (!origin) return callback(null, true);
+app.use((req, res, next) => {
+  const originHeader = req.headers.origin;
+  if (!originHeader) return next();
 
-      // If no allow-list is configured, allow all origins (useful for internal setups)
-      if (allowedOrigins.length === 0) return callback(null, true);
+  const normalizedOrigin = normalizeOrigin(String(originHeader));
+  const isAllowed =
+    allowedOrigins.length === 0 || allowedOrigins.includes(normalizedOrigin);
 
-      if (allowedOrigins.includes(origin)) return callback(null, true);
-      return callback(null, false);
-    },
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-    credentials: true,
-  })
-);
+  if (!isAllowed) return next();
 
+  // Echo the request Origin exactly (required for credentials).
+  res.setHeader("Access-Control-Allow-Origin", String(originHeader));
+  res.setHeader("Vary", "Origin");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET,POST,PUT,PATCH,DELETE,OPTIONS"
+  );
+
+  const requestedHeaders = req.headers["access-control-request-headers"];
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    requestedHeaders ? String(requestedHeaders) : "Content-Type, Authorization"
+  );
+
+  if (req.method === "OPTIONS") {
+    return res.status(204).send();
+  }
+
+  return next();
+});
 // Connect to DB
 connectDB();
-
-// Routes
-app.use("/api/auth", authRoutes);
-app.use("/api/users", userRoutes);
-app.use("/api/admin", adminRoutes);
-app.use("/api/challenges", challengeRoutes);
-app.use("/api/teams", teamRoutes);
 const requireDb = (req: Request, res: Response, next: NextFunction) => {
   // Always allow CORS preflight
   if (req.method === "OPTIONS") return next();
@@ -73,14 +82,25 @@ const requireDb = (req: Request, res: Response, next: NextFunction) => {
       message: "Database unavailable. Please try again in a moment.",
     });
   }
-
   return next();
 };
+
+// Serve uploads folder as static files for downloads
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+
+// Routes
+app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/admin", adminRoutes);
+
 
 app.use("/api/auth", requireDb, authRoutes);
 app.use("/api/users", requireDb, userRoutes);
 app.use("/api/admin", requireDb, adminRoutes);
 app.use("/api/stalls", requireDb, stallsRoutes);
+
+app.use("/api/challenges", challengeRoutes);
+app.use("/api/teams", teamRoutes);
 
 // Health (useful for nginx / uptime checks)
 app.get("/api/health", (req: Request, res: Response) => {

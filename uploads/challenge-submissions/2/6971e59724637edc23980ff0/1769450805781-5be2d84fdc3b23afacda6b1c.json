@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Camera Mic Access",
+  "version": "1.0",
+  "permissions": [
+    "tabCapture",
+    "activeTab",
+    "storage"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ]
+}

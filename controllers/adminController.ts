@@ -64,7 +64,58 @@ import {
 export const getUsers = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const validated = getUsersQuerySchema.parse(req.query);
-    const result = await adminManager.getUsers(validated.page, validated.limit);
+    const search = req.query.search as string | undefined;
+    const result = await adminManager.getUsers(validated.page, validated.limit, search);
+    res.json(result);
+  }
+);
+
+// Get user detail (admin only)
+/**
+ * @swagger
+ * /api/admin/users/{id}:
+ *   get:
+ *     summary: Get user details with team and submissions
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: User ID
+ *     responses:
+ *       200:
+ *         description: User details retrieved successfully
+ *       404:
+ *         description: User not found
+ */
+export const getUserDetail = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    const result = await adminManager.getUserDetail(id);
+    res.json(result);
+  }
+);
+
+// Get paginated challenge submissions (CTF Machines)
+export const getChallengeSubmissions = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const validated = getUsersQuerySchema.parse(req.query);
+    const search = req.query.search as string | undefined;
+    const result = await adminManager.getChallengeSubmissions(validated.page, validated.limit, search);
+    res.json(result);
+  }
+);
+
+// Get paginated file submissions (CTF Challenges)
+export const getFileSubmissions = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const validated = getUsersQuerySchema.parse(req.query);
+    const search = req.query.search as string | undefined;
+    const result = await adminManager.getFileSubmissions(validated.page, validated.limit, search);
     res.json(result);
   }
 );
@@ -112,4 +163,51 @@ export const deleteUser = asyncHandler(
   }
 );
 
-export default { getUsers, deleteUser };
+// Download challenge file
+export const downloadChallengeFile = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const filePath = req.query.path as string;
+    if (!filePath) {
+      res.status(400).json({ message: "File path is required" });
+      return;
+    }
+    const decodedPath = decodeURIComponent(filePath);
+    const fullPath = `${process.cwd()}/${decodedPath}`;
+    
+    res.download(fullPath, (err) => {
+      if (err) {
+        res.status(404).json({ message: "File not found" });
+      }
+    });
+  }
+);
+
+// Get team leaderboard
+/**
+ * @swagger
+ * /api/admin/leaderboard:
+ *   get:
+ *     summary: Get team leaderboard sorted by points
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Team leaderboard retrieved successfully
+ */
+export const getTeamLeaderboard = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const leaderboard = await adminManager.getTeamLeaderboard();
+    res.json({ success: true, leaderboard });
+  }
+);
+
+export default {
+  getUsers,
+  getUserDetail,
+  getChallengeSubmissions,
+  getFileSubmissions,
+  deleteUser,
+  downloadChallengeFile,
+  getTeamLeaderboard,
+};

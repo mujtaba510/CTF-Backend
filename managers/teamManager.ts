@@ -124,13 +124,13 @@ export const createTeam = async (
 
   const uniqueInviteeIds = Array.from(new Set(inviteeIds ?? [])).filter(Boolean);
 
-  // Enforce min 2 players intent by requiring at least 1 invite at creation.
-  if (uniqueInviteeIds.length < 1) {
-    throw new AppError("A team must have at least 2 members. Invite 1 user.", 400);
-  }
-  if (uniqueInviteeIds.length > 2) {
-    throw new AppError("You can invite at most 2 users", 400);
-  }
+  // // Enforce min 2 players intent by requiring at least 1 invite at creation.
+  // if (uniqueInviteeIds.length < 1) {
+  //   throw new AppError("A team must have at least 2 members. Invite 1 user.", 400);
+  // }
+  // if (uniqueInviteeIds.length > 2) {
+  //   throw new AppError("You can invite at most 2 users", 400);
+  // }
 
   if (uniqueInviteeIds.some((id) => id === currentUser._id.toString())) {
     throw new AppError("You cannot invite yourself", 400);

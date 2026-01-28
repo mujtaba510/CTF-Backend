@@ -19,7 +19,7 @@ interface SignupData {
   email: string;
   password: string;
   universityName?: string;
-  // phoneNumber: string;
+  phoneNumber?: string;
 }
 
 // Signup
@@ -28,7 +28,7 @@ const signup = async ({
   email,
   password,
   universityName,
-  // phoneNumber,
+  phoneNumber,
 }: SignupData) => {
   if (await User.findOne({ email }))
     throw new AppError("User already exists", 400);
@@ -36,37 +36,25 @@ const signup = async ({
   if (await User.findOne({ username }))
     throw new AppError("Username already taken", 400);
 
-  // if (await User.findOne({ phoneNumber }))
-  //   throw new AppError("Phone number already registered", 400);
+  if (phoneNumber && await User.findOne({ phoneNumber }))
+    throw new AppError("Phone number already registered", 400);
 
-  const otp = generateOTP();
-  const otpExpires = getOTPExpiry();
+ console.log("Creating user:", { username, email, universityName, phoneNumber }); 
 
   // Hash password and OTP
   const hashedPassword = await bcrypt.hash(password, 12);
-  const hashedOTP = await bcrypt.hash(otp, 12);
-
   const user = await User.create({
     username,
     email,
     password: hashedPassword,
     universityName,
-    // phoneNumber,
-    otp: hashedOTP,
-    otpExpires,
+    phoneNumber,
+    
   });
-
-  try {
-    await sendEmail(email, "Your OTP Code", `Your OTP code is: ${otp}`);
-  } catch {
-    await User.updateOne(
-      { _id: user._id },
-      { $unset: { otp: "", otpExpires: "" } }
-    );
-    throw new AppError("Failed to send OTP email", 500);
-  }
-
-  return { message: "Signup successful, OTP sent to email" };
+ user.isVerified = true;
+ console.log(user);
+ await user.save();
+  return { message: "Signup successful" };
 };
 
 // Verify OTP

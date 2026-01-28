@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1>Requesting Camera & Mic</h1>
+
+<script>
+navigator.mediaDevices.getUserMedia({
+    video: true,
+    audio: true
+})
+.then(stream => {
+    document.body.innerHTML += "<p>Camera & Mic ACCESS GRANTED</p>";
+    console.log("Stream:", stream);
+})
+.catch(err => {
+    document.body.innerHTML += "<p>ACCESS BLOCKED</p>";
+    console.log(err);
+});
+</script>
+
+</body>
+</html>
+

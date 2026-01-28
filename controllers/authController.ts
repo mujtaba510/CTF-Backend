@@ -118,14 +118,20 @@ export const login = asyncHandler(
       | "strict"
       | "none";
 
-    res.cookie("token", token, {
+    const cookieOptions: any = {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite,
-      ...(process.env.COOKIE_DOMAIN ? { domain: process.env.COOKIE_DOMAIN } : {}),
       path: "/",
-      maxAge: 24 * 60 * 60 * 1000,
-    }); // 1 day
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+    };
+
+    // Only set domain in production
+    if (process.env.COOKIE_DOMAIN && process.env.NODE_ENV === "production") {
+      cookieOptions.domain = process.env.COOKIE_DOMAIN;
+    }
+
+    res.cookie("token", token, cookieOptions);
     res.json({ message });
   }
 );

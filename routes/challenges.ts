@@ -37,6 +37,14 @@ router.get(
   challengeController.getUserSolvedChallenges
 );
 
+// View a hint (deducts points from team)
+router.post(
+  "/hint",
+  authenticate,
+  authorize("user", "admin"),
+  challengeController.viewHint
+);
+
 // Submit challenge files (multipart/form-data)
 router.post(
   "/:challengeId/submissions",
