@@ -163,7 +163,6 @@ export const deleteUser = asyncHandler(
   }
 );
 
-<<<<<<< HEAD
 // Download challenge file
 export const downloadChallengeFile = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -212,7 +211,3 @@ export default {
   downloadChallengeFile,
   getTeamLeaderboard,
 };
-=======
-export default { getUsers, deleteUser };
-
->>>>>>> c88ab55bbcc333c38255d9416fce02fe67ac52fd

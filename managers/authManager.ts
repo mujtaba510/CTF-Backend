@@ -19,11 +19,7 @@ interface SignupData {
   email: string;
   password: string;
   universityName?: string;
-<<<<<<< HEAD
   phoneNumber?: string;
-=======
-  phoneNumber: string;
->>>>>>> c88ab55bbcc333c38255d9416fce02fe67ac52fd
 }
 
 // Signup
@@ -40,11 +36,7 @@ const signup = async ({
   if (await User.findOne({ username }))
     throw new AppError("Username already taken", 400);
 
-<<<<<<< HEAD
   if (phoneNumber && await User.findOne({ phoneNumber }))
-=======
-  if (await User.findOne({ phoneNumber }))
->>>>>>> c88ab55bbcc333c38255d9416fce02fe67ac52fd
     throw new AppError("Phone number already registered", 400);
 
  console.log("Creating user:", { username, email, universityName, phoneNumber }); 
@@ -57,30 +49,12 @@ const signup = async ({
     password: hashedPassword,
     universityName,
     phoneNumber,
-<<<<<<< HEAD
     
   });
  user.isVerified = true;
  console.log(user);
  await user.save();
   return { message: "Signup successful" };
-=======
-    otp: hashedOTP,
-    otpExpires,
-  });
-
-  try {
-    await sendEmail(email, "Your OTP Code", `Your OTP code is: ${otp}`);
-  } catch {
-    await User.updateOne(
-      { _id: user._id },
-      { $unset: { otp: "", otpExpires: "" } },
-    );
-    throw new AppError("Failed to send OTP email", 500);
-  }
-
-  return { message: "Signup successful, OTP sent to email" };
->>>>>>> c88ab55bbcc333c38255d9416fce02fe67ac52fd
 };
 
 // Verify OTP

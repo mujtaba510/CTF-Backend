@@ -5,22 +5,12 @@ import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import errorHandler from "./middleware/errorHandler.js";
 import cookieParser from "cookie-parser";
-<<<<<<< HEAD
-import authRoutes from "./routes/auth.ts";
-import userRoutes from "./routes/users.ts";
-import adminRoutes from "./routes/admin.ts";
-import challengeRoutes from "./routes/challenges.ts";
-import teamRoutes from "./routes/teams.ts";
-import stallsRoutes from "./routes/stalls.ts";
-=======
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/users.js";
 import adminRoutes from "./routes/admin.js";
 import challengeRoutes from "./routes/challenges.js";
 import teamRoutes from "./routes/teams.js";
 import stallsRoutes from "./routes/stalls.js";
-import cors from "cors";
->>>>>>> c88ab55bbcc333c38255d9416fce02fe67ac52fd
 import morgan from "morgan";
 import swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "./config/swagger.js";
@@ -56,17 +46,7 @@ app.use((req, res, next) => {
   const isAllowed =
     allowedOrigins.length === 0 || allowedOrigins.includes(normalizedOrigin);
 
-<<<<<<< HEAD
   if (!isAllowed) return next();
-=======
-      if (allowedOrigins.includes(origin)) return callback(null, true);
-      return callback(null, false);
-    },
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-    credentials: true,
-  }),
-);
->>>>>>> c88ab55bbcc333c38255d9416fce02fe67ac52fd
 
   // Echo the request Origin exactly (required for credentials).
   res.setHeader("Access-Control-Allow-Origin", String(originHeader));

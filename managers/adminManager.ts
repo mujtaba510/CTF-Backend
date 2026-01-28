@@ -1,15 +1,9 @@
-<<<<<<< HEAD
-import User from "../models/User.ts";
-import Team from "../models/Team.ts";
-import ChallengeSubmission from "../models/ChallengeSubmission.ts";
-import ChallengeFileSubmission from "../models/ChallengeFileSubmission.ts";
-import type { IUser } from "../models/User.ts";
-import AppError from "../utils/AppError.ts";
-=======
 import User from "../models/User.js";
+import Team from "../models/Team.js";
+import ChallengeSubmission from "../models/ChallengeSubmission.js";
+import ChallengeFileSubmission from "../models/ChallengeFileSubmission.js";
 import type { IUser } from "../models/User.js";
 import AppError from "../utils/AppError.js";
->>>>>>> c88ab55bbcc333c38255d9416fce02fe67ac52fd
 
 // Get paginated users with search (admin only)
 const getUsers = async (page: number, limit: number, search?: string) => {
@@ -77,7 +71,6 @@ const deleteUser = async (id: string, currentUser: IUser) => {
   return { success: true, message: "User deleted successfully" };
 };
 
-<<<<<<< HEAD
 // Get paginated challenge submissions (CTF Machines)
 const getChallengeSubmissions = async (page: number, limit: number, search?: string) => {
   const skip = (page - 1) * limit;
@@ -150,7 +143,3 @@ const getTeamLeaderboard = async () => {
 };
 
 export { getUsers, getUserDetail, deleteUser, getChallengeSubmissions, getFileSubmissions, getTeamLeaderboard };
-=======
-export { getUsers, deleteUser };
-
->>>>>>> c88ab55bbcc333c38255d9416fce02fe67ac52fd

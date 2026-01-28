@@ -1,15 +1,8 @@
-<<<<<<< HEAD
-import User from "../models/User.ts";
-import ChallengeSubmission from "../models/ChallengeSubmission.ts";
-import Team from "../models/Team.ts";
-import type { IUser } from "../models/User.ts";
-import AppError from "../utils/AppError.ts";
-=======
 import User from "../models/User.js";
 import ChallengeSubmission from "../models/ChallengeSubmission.js";
+import Team from "../models/Team.js";
 import type { IUser } from "../models/User.js";
 import AppError from "../utils/AppError.js";
->>>>>>> c88ab55bbcc333c38255d9416fce02fe67ac52fd
 
 // Hint costs
 const HINT_COSTS = {
@@ -832,6 +825,11 @@ const viewHint = async (user: IUser, machineId: string, hintNumber: number) => {
 
   // Get hint cost
   const hintCost = HINT_COSTS[hintNumber as keyof typeof HINT_COSTS];
+
+  // Check if team has enough points
+  if (userTeam.points < hintCost) {
+    throw new AppError(`Insufficient points. Your team needs ${hintCost} points to view this hint, but only has ${userTeam.points}.`, 400);
+  }
 
   // Deduct points and add to viewed hints
   await Team.findByIdAndUpdate(userTeam._id, {
